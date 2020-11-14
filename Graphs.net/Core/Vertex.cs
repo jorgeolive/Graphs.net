@@ -11,6 +11,7 @@ namespace Graphs.Core
         public int Degree => _adjacentEdges.Count();
 
         private ICollection<Edge<T>> _adjacentEdges = new List<Edge<T>>();
+        public IEnumerable<Edge<T>> AdjacentEdges => _adjacentEdges;
 
         public bool Equals(Vertex<T> other) => other.Value.Equals(this.Value);
 
@@ -19,7 +20,7 @@ namespace Graphs.Core
             if (_adjacentEdges.Any(x => x == edge))
                 throw new InvalidOperationException("There's already and edge joining vertices with that direction.");
 
-            if (edge.LeftIncident.Value == this.Value || edge.RightIncident.Value == this.Value)
+            if (edge.From.Value == this.Value || edge.To.Value == this.Value)
             {
                 _adjacentEdges.Add(edge);
             } else

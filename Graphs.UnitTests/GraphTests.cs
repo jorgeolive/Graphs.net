@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Graphs.Core;
 using System;
-using System.Linq;
 using Xunit;
 
 namespace Graphs.UnitTests
@@ -100,17 +99,46 @@ namespace Graphs.UnitTests
         }
 
         [Fact]
-        public void CantAddUnDirectedEdgeToDirectedGraph()
+        public void RegularGraphIsProperlyIdentified()
         {
-            var graph = new Graph<City>(isWeighted: false, isDirected: true);
+            var graph = new Graph<City>(isWeighted: false, isDirected: false);
             var city1 = new City("28903", "Getafe");
             var city2 = new City("28220", "Valdemorillo");
+            var city3 = new City("28210", "Majadahonda");
+            var city4 = new City("28200", "Rozas");
 
             graph.AddVertex(city1);
             graph.AddVertex(city2);
+            graph.AddVertex(city3);
+            graph.AddVertex(city4);
 
-            graph.Invoking(x => x.ConnectVertices(city1, city2)).Should().Throw<InvalidOperationException>();
-            graph.Invoking(x => x.ConnectVertices(city1, city2, Core.Enum.Direction.NotDirected)).Should().Throw<InvalidOperationException>();
+            graph.ConnectVertices(city1, city2);
+            graph.ConnectVertices(city2, city3);
+            graph.ConnectVertices(city3, city4);
+            graph.ConnectVertices(city4, city1);
+
+            graph.IsRegular().Should().BeTrue();
+        }
+
+        [Fact]
+        public void NonRegularGraphIsProperlyIdentified()
+        {
+            var graph = new Graph<City>(isWeighted: false, isDirected: false);
+            var city1 = new City("28903", "Getafe");
+            var city2 = new City("28220", "Valdemorillo");
+            var city3 = new City("28210", "Majadahonda");
+            var city4 = new City("28200", "Rozas");
+
+            graph.AddVertex(city1);
+            graph.AddVertex(city2);
+            graph.AddVertex(city3);
+            graph.AddVertex(city4);
+
+            graph.ConnectVertices(city1, city2);
+            graph.ConnectVertices(city2, city3);
+            graph.ConnectVertices(city3, city4);
+
+            graph.IsRegular().Should().BeFalse();
         }
 
         [Fact]

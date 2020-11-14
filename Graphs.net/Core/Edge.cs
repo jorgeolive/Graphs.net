@@ -1,42 +1,38 @@
-﻿using Graphs.Core.Enum;
-using System;
+﻿using System;
 
 namespace Graphs.Core
 {
+    //TODO : Check si aplica que el weight tipado
     public sealed record Edge<T> : IEquatable<Edge<T>> where T : class, IEquatable<T>
     {
-        public Edge(Vertex<T> left, Vertex<T> right, Direction direction, Weight weight)
-        => (LeftIncident, RightIncident, Direction, Weight) = (left, right, direction, weight);
+        public Edge(Vertex<T> from, Vertex<T> to, bool isDirected, Weight weight)
+        => (From, To, IsDirected, Weight) = (from, to, isDirected, weight);
 
         public bool IsWeighted() => Weight.GetType() == typeof(NoWeight);
-        public bool IsDirected() => Direction == Direction.NotDirected;
-        public Vertex<T> LeftIncident;
-        public Vertex<T> RightIncident;
+        public Vertex<T> From;
+        public Vertex<T> To;
         public Weight Weight;
-        public Direction Direction;
+        public bool IsDirected;
 
         public bool Equals(Edge<T> other)
         {
-            if (this.Direction == Direction.NotDirected)
+            if (!IsDirected)
             {
-                if (other.Direction != Direction.NotDirected)
-                    throw new InvalidOperationException("There's inconsistent edge data in the graph: Directed edges coexisting with undirected");
+                if (other.IsDirected)
+                    throw new InvalidOperationException("Inconsistent edge data in the graph: Directed edges coexisting with undirected");
 
-                if (this.LeftIncident.Value == other.LeftIncident.Value && this.RightIncident.Value == other.RightIncident.Value)
+                if (this.From.Value == other.From.Value && this.To.Value == other.To.Value)
                     return true;
 
-                if (this.LeftIncident.Value == other.RightIncident.Value && this.RightIncident.Value == other.LeftIncident.Value)
+                if (this.From.Value == other.To.Value && this.To.Value == other.From.Value)
                     return true;
             }
             else
             {
-                if (other.Direction == Direction.NotDirected)
+                if (!other.IsDirected)
                     throw new InvalidOperationException("There's inconsistent edge data in the graph: Directed edges coexisting with undirected");
 
-                if (this.LeftIncident.Value == other.LeftIncident.Value && this.RightIncident.Value == other.RightIncident.Value && this.Direction == other.Direction)
-                    return true;
-
-                if (this.LeftIncident.Value == other.RightIncident.Value && this.RightIncident.Value == other.LeftIncident.Value && this.Direction == DirectionExtensions.GetOpposedTo(other.Direction))
+                if (this.From.Value == other.From.Value && this.To.Value == other.To.Value)
                     return true;
             }
 
@@ -44,6 +40,6 @@ namespace Graphs.Core
         }
             
         public bool Contains(T value)
-        => LeftIncident.Value == value || RightIncident.Value == value ? true : false;
+        => From.Value == value || To.Value == value ? true : false;
     }
 }
