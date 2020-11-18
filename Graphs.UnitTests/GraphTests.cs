@@ -15,7 +15,7 @@ namespace Graphs.UnitTests
             public City(string postalCode, string name)
             {
                 PostalCode = postalCode;
-                Name = name;
+                Name = name ;
             }
 
             public bool Equals(City other)
