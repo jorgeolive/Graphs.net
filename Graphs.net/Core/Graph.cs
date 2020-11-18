@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Graphs.Core.Algorithms;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,57 +15,97 @@ namespace Graphs.Core
 
         public readonly bool IsWeighted;
         public readonly bool IsDirected;
-        public bool IsCyclic() => false;
-        public bool IsRegular()
+
+        public bool IsConnected
         {
-            if (!_vertices.Any())
-                throw new InvalidOperationException("The graph has no vertices defined.");
-
-            bool isRegular = true;
-
-            if (IsDirected)
+            get
             {
-                var expectedOrder = _vertices.Values.First().AdjacentEdges.Count();
-
-                foreach (var edge in _vertices.Values)
+                if (!this.IsDirected)
                 {
-                    if (isRegular)
+                    foreach (var vertex in Vertices.Values)
                     {
-                        isRegular = 
-                            edge.AdjacentEdges.Count(x => x.From == edge) == edge.AdjacentEdges.Count(x => x.From == edge) &&
-                            edge.AdjacentEdges.Count(x => x.From == edge) + edge.AdjacentEdges.Count(x => x.From == edge) == expectedOrder;
+                        var verticesFromSource = BreadthFirstSearch.GetConnectedVertices(this, vertex);
+
+                        if (verticesFromSource.Count() != this.Order)
+                        {
+                            return false;
+                        }
                     }
+
+                    return true;
                 }
 
-            } else {
-                var expectedOrder = _vertices.Values.First().Degree;
-                isRegular = _vertices.Values.All(x => x.Degree == expectedOrder);
+                throw new NotImplementedException("Directed IsConnected not implemented");
+            }
+        }
+
+        public bool Cyclic => false;
+        public bool IsRegular
+        {
+            get
+            {
+                if (!Vertices.Any())
+                    throw new InvalidOperationException("The graph has no vertices defined.");
+
+                bool isRegular = true;
+
+                if (IsDirected)
+                {
+                    var expectedOrder = Vertices.Values.First().AdjacentEdges.Count();
+
+                    foreach (var edge in Vertices.Values)
+                    {
+                        if (isRegular)
+                        {
+                            isRegular =
+                                edge.AdjacentEdges.Count(x => x.From == edge) == edge.AdjacentEdges.Count(x => x.From == edge) &&
+                                edge.AdjacentEdges.Count(x => x.From == edge) + edge.AdjacentEdges.Count(x => x.From == edge) == expectedOrder;
+                        }
+                    }
+
+                }
+                else
+                {
+                    var expectedOrder = Vertices.Values.First().Degree;
+                    isRegular = Vertices.Values.All(x => x.Degree == expectedOrder);
+                }
+
+                return isRegular;
+            }
+        }
+
+        public bool IsComplete => false;
+        public bool IsBipartite => false;
+        public int Order => Vertices.Count();
+        public int Size => _edges.Count();
+        public Dictionary<T, Vertex<T>> Vertices { get; } = new Dictionary<T, Vertex<T>>();
+        public Dictionary<T, ICollection<Vertex<T>>> AdjancecyList { get; } = new Dictionary<T, ICollection<Vertex<T>>>();
+
+        public bool AreVerticesConnected(T from, T to)
+        {
+            if (TryGetVertex(to, out Vertex<T> toVertex) && TryGetVertex(from, out Vertex<T> fromVertex))
+            {
+                var verticesFromSource = BreadthFirstSearch.GetConnectedVertices(this, fromVertex);
+                return verticesFromSource.Contains(toVertex);
             }
 
-            return isRegular;
+            throw new ArgumentOutOfRangeException("Some vertex is not part of the graph.");
         }
-        public bool IsComplete() => false;
-        public bool IsBipartite() => false;
 
-        public int Order => _vertices.Count();
-        public int Size => _edges.Count();
-
-        private Dictionary<T, Vertex<T>> _vertices = new Dictionary<T, Vertex<T>>();
-        public ICollection<Edge<T>> _edges = new List<Edge<T>>();
-
-        public IEnumerable<Vertex<T>> GetVertices() => _vertices.Values;
-        public IEnumerable<Edge<T>> GetAdjacencyList() => _edges;
-
+        private ICollection<Edge<T>> _edges = new List<Edge<T>>();
+        public bool TryGetVertex(T value, out Vertex<T> vertex) => Vertices.TryGetValue(value, out vertex);
         public void AddVertex(T @object)
         {
-            if (_vertices.ContainsKey(@object))
+            if (Vertices.ContainsKey(@object))
             {
                 throw new InvalidOperationException("Can't add the same vertex twice to the graph.");
             }
 
-            _vertices.Add(@object, new Vertex<T>(@object));
-        }
+            var newVertex = new Vertex<T>(@object);
 
+            Vertices.Add(@object, newVertex);
+            AdjancecyList.Add(@object, new List<Vertex<T>>());
+        }
         public void ConnectVertices(T from, T to)
         {
             if (IsWeighted)
@@ -72,7 +113,6 @@ namespace Graphs.Core
 
             this.ConnectVertices(from, to, new NoWeight());
         }
-
         public void ConnectVertices(T from, T to, Weight weight)
         {
             if (IsWeighted)
@@ -90,7 +130,7 @@ namespace Graphs.Core
                 }
             }
 
-            if (!this._vertices.TryGetValue(from, out Vertex<T> leftVertex) || !this._vertices.TryGetValue(to, out Vertex<T> rightVertex))
+            if (!this.Vertices.TryGetValue(from, out Vertex<T> leftVertex) || !this.Vertices.TryGetValue(to, out Vertex<T> rightVertex))
                 throw new InvalidOperationException("Some of the vertices are not associated to the graph.");
 
             var edge = new Edge<T>(leftVertex, rightVertex, IsDirected, weight);
@@ -98,6 +138,20 @@ namespace Graphs.Core
             _edges.Add(edge);
             leftVertex.AddEdge(edge);
             rightVertex.AddEdge(edge);
+            UpdateAdjancecyListOnAdd(from, to);
+
+        }
+        private void UpdateAdjancecyListOnAdd(T from, T to)
+        {
+            if (AdjancecyList.TryGetValue(from, out ICollection<Vertex<T>> neightbours) && this.Vertices.TryGetValue(to, out Vertex<T> value))
+            {
+                neightbours.Add(value);
+            }
+
+            if (!IsDirected && AdjancecyList.TryGetValue(to, out neightbours) && this.Vertices.TryGetValue(from, out value))
+            {
+                neightbours.Add(value);
+            }
         }
     }
 }

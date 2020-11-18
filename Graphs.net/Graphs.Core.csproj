@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Algorithms\Pathfinding\" />
+    <Compile Remove="Algorithms\Pathfinding\**" />
+    <EmbeddedResource Remove="Algorithms\Pathfinding\**" />
+    <None Remove="Algorithms\Pathfinding\**" />
   </ItemGroup>
 
 </Project>

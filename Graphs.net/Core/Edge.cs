@@ -5,7 +5,7 @@ namespace Graphs.Core
     //TODO : Check si aplica que el weight tipado
     public sealed record Edge<T> : IEquatable<Edge<T>> where T : class, IEquatable<T>
     {
-        public Edge(Vertex<T> from, Vertex<T> to, bool isDirected, Weight weight)
+        internal Edge(Vertex<T> from, Vertex<T> to, bool isDirected, Weight weight)
         => (From, To, IsDirected, Weight) = (from, to, isDirected, weight);
 
         public bool IsWeighted() => Weight.GetType() == typeof(NoWeight);

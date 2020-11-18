@@ -117,7 +117,7 @@ namespace Graphs.UnitTests
             graph.ConnectVertices(city3, city4);
             graph.ConnectVertices(city4, city1);
 
-            graph.IsRegular().Should().BeTrue();
+            graph.IsRegular.Should().BeTrue();
         }
 
         [Fact]
@@ -138,7 +138,7 @@ namespace Graphs.UnitTests
             graph.ConnectVertices(city2, city3);
             graph.ConnectVertices(city3, city4);
 
-            graph.IsRegular().Should().BeFalse();
+            graph.IsRegular.Should().BeFalse();
         }
 
         [Fact]
@@ -153,6 +153,110 @@ namespace Graphs.UnitTests
 
             graph.Invoking(x => x.ConnectVertices(city1, city2)).Should().Throw<InvalidOperationException>();
             graph.Invoking(x => x.ConnectVertices(city1, city2, new NoWeight())).Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void VerticesShouldBeConnected()
+        {
+            var graph = new Graph<City>(isWeighted: false, isDirected: false);
+            var city1 = new City("28903", "Getafe");
+            var city2 = new City("28220", "Valdemorillo");
+            var city3 = new City("28210", "Majadahonda");
+
+            graph.AddVertex(city1);
+            graph.AddVertex(city2);
+            graph.AddVertex(city3);
+
+            graph.ConnectVertices(city1, city2);
+
+            graph.AreVerticesConnected(city1, city2).Should().BeTrue();
+        }
+
+        [Fact]
+        public void VerticesShouldBeNotConnected()
+        {
+            var graph = new Graph<City>(isWeighted: false, isDirected: false);
+            var city1 = new City("28903", "Getafe");
+            var city2 = new City("28220", "Valdemorillo");
+            var city3 = new City("28210", "Majadahonda");
+
+            graph.AddVertex(city1);
+            graph.AddVertex(city2);
+            graph.AddVertex(city3);
+
+            graph.ConnectVertices(city1, city2);
+
+            graph.AreVerticesConnected(city1, city3).Should().BeFalse();
+            graph.AreVerticesConnected(city2, city3).Should().BeFalse();
+        }
+
+        [Fact]
+        public void DirectedGraphVerticesShouldNotBeConnected()
+        {
+            var graph = new Graph<City>(isWeighted: false, isDirected: true);
+            var city1 = new City("28903", "Getafe");
+            var city2 = new City("28220", "Valdemorillo");
+            var city3 = new City("28210", "Majadahonda");
+
+            graph.AddVertex(city1);
+            graph.AddVertex(city2);
+            graph.AddVertex(city3);
+
+            graph.ConnectVertices(city1, city2);
+
+            graph.AreVerticesConnected(city2, city1).Should().BeFalse();
+        }
+
+        [Fact]
+        public void DirectedGraphVerticesShouldBeConnected()
+        {
+            var graph = new Graph<City>(isWeighted: false, isDirected: true);
+            var city1 = new City("28903", "Getafe");
+            var city2 = new City("28220", "Valdemorillo");
+            var city3 = new City("28210", "Majadahonda");
+
+            graph.AddVertex(city1);
+            graph.AddVertex(city2);
+            graph.AddVertex(city3);
+
+            graph.ConnectVertices(city1, city2);
+
+            graph.AreVerticesConnected(city1, city2).Should().BeTrue();
+        }
+
+        [Fact]
+        public void GraphShouldBeConnected()
+        {
+            var graph = new Graph<City>(isWeighted: false, isDirected: false);
+            var city1 = new City("28903", "Getafe");
+            var city2 = new City("28220", "Valdemorillo");
+            var city3 = new City("28210", "Majadahonda");
+
+            graph.AddVertex(city1);
+            graph.AddVertex(city2);
+            graph.AddVertex(city3);
+
+            graph.ConnectVertices(city1, city2);
+            graph.ConnectVertices(city1, city3);
+
+            graph.IsConnected.Should().BeTrue();
+        }
+
+        [Fact]
+        public void GraphShouldNotBeConnected()
+        {
+            var graph = new Graph<City>(isWeighted: false, isDirected: false);
+            var city1 = new City("28903", "Getafe");
+            var city2 = new City("28220", "Valdemorillo");
+            var city3 = new City("28210", "Majadahonda");
+
+            graph.AddVertex(city1);
+            graph.AddVertex(city2);
+            graph.AddVertex(city3);
+
+            graph.ConnectVertices(city1, city2);
+
+            graph.IsConnected.Should().BeFalse();
         }
     }
 }
