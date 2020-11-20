@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Graphs.Core;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace Graphs.UnitTests
@@ -117,7 +118,7 @@ namespace Graphs.UnitTests
             graph.ConnectVertices(city3, city4);
             graph.ConnectVertices(city4, city1);
 
-            graph.IsRegular.Should().BeTrue();
+            graph.IsRegular().Should().BeTrue();
         }
 
         [Fact]
@@ -138,7 +139,7 @@ namespace Graphs.UnitTests
             graph.ConnectVertices(city2, city3);
             graph.ConnectVertices(city3, city4);
 
-            graph.IsRegular.Should().BeFalse();
+            graph.IsRegular().Should().BeFalse();
         }
 
         [Fact]
@@ -257,6 +258,44 @@ namespace Graphs.UnitTests
             graph.ConnectVertices(city1, city2);
 
             graph.IsConnected.Should().BeFalse();
+        }
+
+        [Fact]
+        public void ShortestPathIsFoundOnUnWeightedUndirectedGraph()
+        {
+            var graph = new Graph<City>(isWeighted: false, isDirected: false);
+
+            var city1 = new City("28903", "Getafe");
+            var city2 = new City("28220", "Valdemorillo");
+            var city3 = new City("28210", "Majadahonda");
+            var city4 = new City("28200", "Rozas");
+            var city5 = new City("28230", "Villalba");
+            var city6 = new City("28240", "Moralzarzal");
+            var city7 = new City("28250", "Cercedilla");
+
+            graph.AddVertex(city1);
+            graph.AddVertex(city2);
+            graph.AddVertex(city3);
+            graph.AddVertex(city4);
+            graph.AddVertex(city5);
+            graph.AddVertex(city6);
+            graph.AddVertex(city7);
+
+            graph.ConnectVertices(city1, city2);
+            graph.ConnectVertices(city2, city3);
+            graph.ConnectVertices(city3, city4);
+            graph.ConnectVertices(city4, city5);
+            graph.ConnectVertices(city5, city6);
+            graph.ConnectVertices(city6, city7);
+            graph.ConnectVertices(city7, city1);
+
+            var shortestPath =  graph.GetShortestPathBetween(city1, city5);
+
+            shortestPath.ElementAt(0).Value.Should().Be(city1);
+            shortestPath.ElementAt(1).Value.Should().Be(city7);
+            shortestPath.ElementAt(2).Value.Should().Be(city6);
+            shortestPath.ElementAt(3).Value.Should().Be(city5);
+
         }
     }
 }
