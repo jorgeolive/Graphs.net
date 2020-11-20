@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Graphs.Core.Algorithms
 {
-    internal static class Djistra
+    internal static class Dijkstra
     {
     }
 }
