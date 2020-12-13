@@ -18,9 +18,14 @@ namespace Graphs.Core.Algorithms
                 _objects = new Vertex<T>[graph.Order];
                 _weights = new float?[graph.Order];
 
+                InitializeHeap(graph, startVertex);
+            }
+
+            private void InitializeHeap(Graph<T> graph, Vertex<T> startVertex)
+            {
                 var tempIndex = 0;
 
-                foreach(var vertex in graph.Vertices.Values)
+                foreach (var vertex in graph.Vertices.Values)
                 {
                     _objects[tempIndex] = vertex;
                     tempIndex++;
@@ -61,12 +66,12 @@ namespace Graphs.Core.Algorithms
             {
                 var topElement = _objects[0];
 
-                var lastNonNullPosition = Array.IndexOf(_objects, null);
+                var lastNullPosition = Array.IndexOf(_objects, null);
 
-                if(lastNonNullPosition != -1)
+                if(lastNullPosition != -1)
                 {
-                    (_objects[0], _objects[lastNonNullPosition -1]) = (_objects[lastNonNullPosition -1], null);
-                    (_weights[0], _weights[lastNonNullPosition -1]) = (_weights[lastNonNullPosition -1], null);
+                    (_objects[0], _objects[lastNullPosition -1]) = (_objects[lastNullPosition -1], null);
+                    (_weights[0], _weights[lastNullPosition -1]) = (_weights[lastNullPosition -1], null);
                 } else
                 {
                     (_objects[0], _objects[_maxSize - 1]) = (_objects[_maxSize - 1], null);
