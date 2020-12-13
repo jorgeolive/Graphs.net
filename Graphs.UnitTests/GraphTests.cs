@@ -6,24 +6,8 @@ using Xunit;
 
 namespace Graphs.UnitTests
 {
-    public class GraphTests
+    public partial class GraphTests
     {
-        private class City : IEquatable<City>
-        {
-            public string PostalCode;
-            public string Name;
-
-            public City(string postalCode, string name)
-            {
-                PostalCode = postalCode;
-                Name = name ;
-            }
-
-            public bool Equals(City other)
-            => this.PostalCode == other.PostalCode;
-
-            public override int GetHashCode() => (PostalCode, Name).GetHashCode();
-        }
 
         [Fact]
         public void CanAddOneEdgeWithTwoVertices()

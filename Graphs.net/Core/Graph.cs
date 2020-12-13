@@ -151,6 +151,11 @@ namespace Graphs.Core
 
         }
 
+        public Graph<T> CreateSMT()
+        {
+            return Prim.CreateMinimumSpanningTreeFor(this);
+        }
+
         private void UpdateAdjancecyListOnAdd(T from, T to)
         {
             if (AdjancecyList.TryGetValue(from, out ICollection<Vertex<T>> neightbours) && this.Vertices.TryGetValue(to, out Vertex<T> value))

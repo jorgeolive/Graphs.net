@@ -8,21 +8,20 @@ namespace Graphs.Core
     {
         public Vertex(T value) => Value = value;
         public T Value;
-        public int Degree => _adjacentEdges.Count();
+        public int Degree => AdjacentEdges.Count();
 
-        private ICollection<Edge<T>> _adjacentEdges = new List<Edge<T>>();
-        public IEnumerable<Edge<T>> AdjacentEdges => _adjacentEdges;
+        public ICollection<Edge<T>> AdjacentEdges = new List<Edge<T>>();
 
         public bool Equals(Vertex<T> other) => other.Value.Equals(this.Value);
 
         public void AddEdge(Edge<T> edge)
         {
-            if (_adjacentEdges.Any(x => x == edge))
+            if (AdjacentEdges.Any(x => x == edge))
                 throw new InvalidOperationException("There's already and edge joining vertices with that direction.");
 
             if (edge.From.Value == this.Value || edge.To.Value == this.Value)
             {
-                _adjacentEdges.Add(edge);
+                AdjacentEdges.Add(edge);
             } else
             {
                 throw new InvalidOperationException("Neither edge value matches to the vertex value.");
