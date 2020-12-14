@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Graphs.Core.Exceptions;
+using System;
 
 namespace Graphs.Core
 {
-    //TODO : Check si aplica que el weight tipado
     public sealed record Edge<T> : IEquatable<Edge<T>> where T : class, IEquatable<T>
     {
         internal Edge(Vertex<T> from, Vertex<T> to, bool isDirected, Weight weight)
@@ -19,7 +19,7 @@ namespace Graphs.Core
             if (!IsDirected)
             {
                 if (other.IsDirected)
-                    throw new InvalidOperationException("Inconsistent edge data in the graph: Directed edges coexisting with undirected");
+                    throw new GraphIntegrityException("Inconsistent edge data in the graph: Directed edges coexisting with undirected");
 
                 if (this.From.Value == other.From.Value && this.To.Value == other.To.Value)
                     return true;
@@ -30,7 +30,7 @@ namespace Graphs.Core
             else
             {
                 if (!other.IsDirected)
-                    throw new InvalidOperationException("There's inconsistent edge data in the graph: Directed edges coexisting with undirected");
+                    throw new GraphIntegrityException("There's inconsistent edge data in the graph: Directed edges coexisting with undirected");
 
                 if (this.From.Value == other.From.Value && this.To.Value == other.To.Value)
                     return true;

@@ -1,5 +1,5 @@
-﻿using Graphs.Core.Algorithms;
-using Graphs.Core.Exceptions;
+﻿using Graphs.Core.Exceptions;
+using Graphs.Core.Internals.Algorithms;
 using System;
 using System.Collections.Generic;
 using System.Linq;

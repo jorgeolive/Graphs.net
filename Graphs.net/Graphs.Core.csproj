@@ -10,4 +10,8 @@
     <None Remove="Algorithms\Pathfinding\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Algorithms\" />
+  </ItemGroup>
+
 </Project>

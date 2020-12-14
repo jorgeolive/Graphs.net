@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Graphs.Core.Algorithms
+namespace Graphs.Core.Internals.Algorithms
 {
     internal static class BreadthFirstSearch
     {

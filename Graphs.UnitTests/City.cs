@@ -2,28 +2,26 @@
 
 namespace Graphs.UnitTests
 {
-    public partial class GraphTests
+    public class City : IEquatable<City>
     {
-        public class City : IEquatable<City>
+        public string PostalCode;
+        public string Name;
+
+        public City(string postalCode, string name)
         {
-            public string PostalCode;
-            public string Name;
+            PostalCode = postalCode;
+            Name = name;
+        }
 
-            public City(string postalCode, string name)
-            {
-                PostalCode = postalCode;
-                Name = name ;
-            }
+        public bool Equals(City other)
+        => this.PostalCode == other.PostalCode;
 
-            public bool Equals(City other)
-            => this.PostalCode == other.PostalCode;
+        public override int GetHashCode() => (PostalCode, Name).GetHashCode();
 
-            public override int GetHashCode() => (PostalCode, Name).GetHashCode();
-
-            public override string ToString()
-            {
-                return Name;
-            }
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }
+
